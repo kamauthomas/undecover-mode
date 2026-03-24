@@ -518,6 +518,8 @@ class TestManagedIconTheme:
 
         assert theme_root == manager.icons_root / "ParrotUndercoverWin10LightIcons"
         index_theme = (theme_root / "index.theme").read_text(encoding="utf-8")
+        assert "[mimetypes/16]" in index_theme
+        assert "[places/22]" in index_theme
         assert "[status/16]" in index_theme
         assert "Context=Status" in index_theme
         assert "[actions/22]" in index_theme
@@ -532,6 +534,12 @@ class TestManagedIconTheme:
         ).read_text(encoding="utf-8") == "<svg/>"
         assert (
             theme_root / "places" / "symbolic" / "folder-download-symbolic.svg"
+        ).read_text(encoding="utf-8") == "<svg/>"
+        assert (
+            theme_root / "places" / "16" / "folder.svg"
+        ).read_text(encoding="utf-8") == "<svg/>"
+        assert (
+            theme_root / "mimetypes" / "24" / "text-plain.svg"
         ).read_text(encoding="utf-8") == "<svg/>"
         audio_icon = theme_root / "status" / "16" / "audio-volume-medium-symbolic.svg"
         media_icon = theme_root / "actions" / "22" / "media-playback-start-symbolic.svg"

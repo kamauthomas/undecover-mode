@@ -25,16 +25,6 @@ var spacer = panel.addWidget("org.kde.plasma.panelspacer");
 spacer.currentConfigGroup = ["General"];
 spacer.writeConfig("expanding", "true");
 
-var cpuMonitor = panel.addWidget("org.kde.plasma.systemmonitor.cpu");
-cpuMonitor.currentConfigGroup = ["Appearance"];
-cpuMonitor.writeConfig("chartFace", "org.kde.ksysguard.textonly");
-cpuMonitor.writeConfig("title", "CPU");
-
-var memMonitor = panel.addWidget("org.kde.plasma.systemmonitor.memory");
-memMonitor.currentConfigGroup = ["Appearance"];
-memMonitor.writeConfig("chartFace", "org.kde.ksysguard.textonly");
-memMonitor.writeConfig("title", "RAM");
-
 var tray = panel.addWidget("org.kde.plasma.systemtray");
 tray.currentConfigGroup = ["General"];
 tray.writeConfig("iconSpacing", "1");

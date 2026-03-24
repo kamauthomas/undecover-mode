@@ -27,6 +27,10 @@
       "name": "Command Prompt",
       "icon_asset": "cmd-prompt.svg"
     },
+    "brave-browser.desktop": {
+      "name": "Microsoft Edge",
+      "icon_asset": "microsoft-edge.svg"
+    },
     "org.kde.dolphin.desktop": {
       "name": "File Explorer",
       "icon_asset": "file-explorer.svg"

@@ -39,23 +39,72 @@ _MANAGED_ICON_THEME_SPECS: dict[str, dict[str, str]] = {
     },
 }
 
+_MANAGED_ICON_THEME_FIXED_SIZES: tuple[str, ...] = ("16", "22", "24")
+_MANAGED_ICON_THEME_FIXED_CONTEXTS: frozenset[str] = frozenset({"mimetypes", "places"})
+
 _MANAGED_ICON_THEME_FILES: dict[tuple[str, str], str] = {
     ("actions/scalable", "folder-open-recent.svg"): "windows-folder-open.svg",
     ("actions/scalable", "folder-symbolic.svg"): "windows-folder.svg",
     ("actions/symbolic", "folder-open-recent-symbolic.svg"): "windows-folder-open.svg",
     ("actions/symbolic", "folder-symbolic.svg"): "windows-folder.svg",
+    ("mimetypes/scalable", "application-json.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "application-msword-template.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-msword.svg"): "windows-file.svg",
     ("mimetypes/scalable", "application-octet-stream.svg"): "windows-file.svg",
     ("mimetypes/scalable", "application-pdf.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-vnd.ms-access.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-vnd.ms-excel.addin.macroenabled.12.svg"): "windows-file.svg",
+    (
+        "mimetypes/scalable",
+        "application-vnd.ms-excel.template.macroenabled.12.svg",
+    ): "windows-file.svg",
+    (
+        "mimetypes/scalable",
+        "application-vnd.ms-powerpoint.addin.macroenabled.12.svg",
+    ): "windows-file.svg",
+    (
+        "mimetypes/scalable",
+        "application-vnd.ms-powerpoint.template.macroenabled.12.svg",
+    ): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-bzip-compressed-tar.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-bzip.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-compressed-tar.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-deb.svg"): "windows-file.svg",
     ("mimetypes/scalable", "application-x-desktop.svg"): "windows-file.svg",
     ("mimetypes/scalable", "application-x-executable.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-gzip.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-lzma-compressed-tar.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-ms-dos-executable.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-msdownload.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-rar.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-rpm.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-tar.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-zerosize.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-zip.svg"): "windows-file.svg",
     ("mimetypes/scalable", "audio-x-generic.svg"): "windows-file.svg",
     ("mimetypes/scalable", "image-x-generic.svg"): "windows-file.svg",
     ("mimetypes/scalable", "inode-directory.svg"): "windows-folder.svg",
     ("mimetypes/scalable", "inode-symlink.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "package-x-generic.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "text-css.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-csv.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-html.svg"): "windows-text-file.svg",
     ("mimetypes/scalable", "text-plain.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-rtf.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-xml.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-x-c++hdr.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-x-c++src.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-x-chdr.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-x-csrc.svg"): "windows-text-file.svg",
     ("mimetypes/scalable", "text-x-generic.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-x-markdown.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-x-python.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-x-script.svg"): "windows-text-file.svg",
     ("mimetypes/scalable", "unknown.svg"): "windows-file.svg",
     ("mimetypes/scalable", "video-x-generic.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "x-office-document.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "x-office-presentation.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "x-office-spreadsheet.svg"): "windows-file.svg",
     ("mimetypes/symbolic", "inode-directory-symbolic.svg"): "windows-folder.svg",
     ("places/scalable", "desktop.svg"): "windows-folder-desktop.svg",
     ("places/scalable", "folder-bookmark.svg"): "windows-folder.svg",
@@ -734,7 +783,17 @@ class UndercoverMode:
         return _MANAGED_ICON_THEME_SPECS.get(theme_name)
 
     def _managed_icon_theme_asset_names(self) -> list[str]:
-        return sorted(set(_MANAGED_ICON_THEME_FILES.values()))
+        return sorted(set(self._managed_icon_theme_files().values()))
+
+    def _managed_icon_theme_files(self) -> dict[tuple[str, str], str]:
+        managed = dict(_MANAGED_ICON_THEME_FILES)
+        for (relative_dir, filename), asset_name in _MANAGED_ICON_THEME_FILES.items():
+            context_key, size_key = relative_dir.split("/", 1)
+            if size_key != "scalable" or context_key not in _MANAGED_ICON_THEME_FIXED_CONTEXTS:
+                continue
+            for size in _MANAGED_ICON_THEME_FIXED_SIZES:
+                managed.setdefault((f"{context_key}/{size}", filename), asset_name)
+        return managed
 
     def _managed_icon_theme_source_roots(self, preset: Preset) -> list[Path]:
         spec = self._managed_icon_theme_spec(preset.icon_theme)
@@ -860,8 +919,9 @@ class UndercoverMode:
             return None
 
         target_dir = self.icons_root / preset.icon_theme
+        managed_icon_files = self._managed_icon_theme_files()
         theme_dirs = sorted(
-            {directory for directory, _filename in _MANAGED_ICON_THEME_FILES}
+            {directory for directory, _filename in managed_icon_files}
             | {directory for directory, _filename in _MANAGED_ICON_THEME_PASSTHROUGH_FILES}
         )
         index_theme = "\n".join(
@@ -871,7 +931,7 @@ class UndercoverMode:
         )
         self._write_text(target_dir / "index.theme", index_theme + "\n")
 
-        for (relative_dir, filename), asset_name in _MANAGED_ICON_THEME_FILES.items():
+        for (relative_dir, filename), asset_name in managed_icon_files.items():
             source = self.assets_root / asset_name
             if not source.exists():
                 raise UndercoverError(f"Icon asset not found: {source}")
