@@ -1,0 +1,35 @@
+{
+  "id": "win10",
+  "name": "Windows 10",
+  "package_id": "org.parrotsec.undercover.win10.desktop",
+  "package_name": "Parrot Undercover Windows 10",
+  "wallpaper_asset": "windows10-wallpaper.svg",
+  "start_icon_asset": "windows-start.svg",
+  "color_scheme": "ParrotUndercoverWin10Light",
+  "color_scheme_asset": "windows10-light.colors",
+  "plasma_theme": "default",
+  "icon_theme": "breeze",
+  "gtk_theme": "Windows 10 Light",
+  "gtk_icon_theme": "breeze",
+  "cursor_theme": "breeze_cursors",
+  "prefer_dark": false,
+  "launcher_desktop_ids": [
+    "org.kde.dolphin.desktop",
+    "brave-browser.desktop",
+    "org.kde.konsole.desktop"
+  ],
+  "hide_filename_globs": [
+    "parrot-*.desktop"
+  ],
+  "hide_content_markers": [],
+  "app_disguises": {
+    "org.kde.konsole.desktop": {
+      "name": "Command Prompt",
+      "icon_asset": "cmd-prompt.svg"
+    },
+    "org.kde.dolphin.desktop": {
+      "name": "File Explorer",
+      "icon_asset": "file-explorer.svg"
+    }
+  }
+}

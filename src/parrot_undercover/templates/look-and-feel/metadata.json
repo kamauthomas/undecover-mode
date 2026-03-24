@@ -1,0 +1,16 @@
+{
+  "KPlugin": {
+    "Id": "__PACKAGE_ID__",
+    "Name": "__PACKAGE_NAME__",
+    "Description": "Windows-style undercover preset for Parrot OS",
+    "Authors": [
+      {
+        "Name": "Codex"
+      }
+    ],
+    "Icon": "preferences-desktop-theme-global",
+    "License": "GPL-3.0+",
+    "Version": "1.0"
+  },
+  "KPackageStructure": "Plasma/LookAndFeel"
+}

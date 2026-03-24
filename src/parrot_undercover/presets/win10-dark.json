@@ -1,0 +1,35 @@
+{
+  "id": "win10-dark",
+  "name": "Windows 10 Dark",
+  "package_id": "org.parrotsec.undercover.win10dark.desktop",
+  "package_name": "Parrot Undercover Windows 10 Dark",
+  "wallpaper_asset": "windows10-wallpaper.svg",
+  "start_icon_asset": "windows-start-dark.svg",
+  "color_scheme": "ParrotUndercoverWin10Dark",
+  "color_scheme_asset": "windows10-dark.colors",
+  "plasma_theme": "breeze-dark",
+  "icon_theme": "breeze-dark",
+  "gtk_theme": "Windows 10 Dark",
+  "gtk_icon_theme": "breeze-dark",
+  "cursor_theme": "breeze_cursors",
+  "prefer_dark": true,
+  "launcher_desktop_ids": [
+    "org.kde.dolphin.desktop",
+    "brave-browser.desktop",
+    "org.kde.konsole.desktop"
+  ],
+  "hide_filename_globs": [
+    "parrot-*.desktop"
+  ],
+  "hide_content_markers": [],
+  "app_disguises": {
+    "org.kde.konsole.desktop": {
+      "name": "Command Prompt",
+      "icon_asset": "cmd-prompt.svg"
+    },
+    "org.kde.dolphin.desktop": {
+      "name": "File Explorer",
+      "icon_asset": "file-explorer.svg"
+    }
+  }
+}

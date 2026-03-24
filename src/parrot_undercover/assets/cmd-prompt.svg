@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect x="4" y="8" width="56" height="48" rx="3" fill="#0c0c0c"/>
+  <rect x="4" y="8" width="56" height="14" rx="3" fill="#1e1e1e"/>
+  <rect x="4" y="19" width="56" height="37" rx="0" fill="#0c0c0c"/>
+  <text x="8" y="18" font-family="Consolas,monospace" font-size="8" fill="#aaa">Command Prompt</text>
+  <text x="10" y="38" font-family="Consolas,monospace" font-size="11" font-weight="bold" fill="#cccccc">C:\&gt;_</text>
+</svg>

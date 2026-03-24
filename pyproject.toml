@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+parrot_undercover = [
+    "assets/*.svg",
+    "assets/*.colors",
+    "presets/*.json",
+    "templates/look-and-feel/metadata.json",
+    "templates/look-and-feel/contents/defaults",
+    "templates/look-and-feel/contents/layouts/*.js",
+]
+
+[project]
+name = "parrot-undercover"
+version = "0.1.0"
+description = "Windows-style undercover mode for Parrot OS on KDE Plasma"
+requires-python = ">=3.11"
+
+[project.scripts]
+parrot-undercover = "parrot_undercover.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "mypy>=1.10",
+    "ruff>=0.4",
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
