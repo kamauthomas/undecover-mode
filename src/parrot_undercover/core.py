@@ -106,6 +106,129 @@ _MANAGED_ICON_THEME_FILES: dict[tuple[str, str], str] = {
     ("places/symbolic", "user-home-symbolic.svg"): "windows-folder.svg",
 }
 
+_MANAGED_ICON_THEME_PASSTHROUGH_FILES: tuple[tuple[str, str], ...] = (
+    ("actions/16", "media-playback-pause-symbolic.svg"),
+    ("actions/16", "media-playback-pause.svg"),
+    ("actions/16", "media-playback-start-symbolic.svg"),
+    ("actions/16", "media-playback-start.svg"),
+    ("actions/16", "media-playback-stop-symbolic.svg"),
+    ("actions/16", "media-playback-stop.svg"),
+    ("actions/16", "player-time-symbolic.svg"),
+    ("actions/16", "player-time.svg"),
+    ("actions/16", "player-volume-muted-symbolic.svg"),
+    ("actions/16", "player-volume-muted.svg"),
+    ("actions/16", "player-volume-symbolic.svg"),
+    ("actions/16", "player-volume.svg"),
+    ("actions/22", "media-playback-pause-symbolic.svg"),
+    ("actions/22", "media-playback-pause.svg"),
+    ("actions/22", "media-playback-start-symbolic.svg"),
+    ("actions/22", "media-playback-start.svg"),
+    ("actions/22", "media-playback-stop-symbolic.svg"),
+    ("actions/22", "media-playback-stop.svg"),
+    ("actions/22", "player-time-symbolic.svg"),
+    ("actions/22", "player-time.svg"),
+    ("actions/22", "player-volume-muted-symbolic.svg"),
+    ("actions/22", "player-volume-muted.svg"),
+    ("actions/22", "player-volume-symbolic.svg"),
+    ("actions/22", "player-volume.svg"),
+    ("actions/24", "media-playback-pause-symbolic.svg"),
+    ("actions/24", "media-playback-pause.svg"),
+    ("actions/24", "media-playback-start-symbolic.svg"),
+    ("actions/24", "media-playback-start.svg"),
+    ("actions/24", "media-playback-stop-symbolic.svg"),
+    ("actions/24", "media-playback-stop.svg"),
+    ("actions/24", "player-time-symbolic.svg"),
+    ("actions/24", "player-time.svg"),
+    ("actions/24", "player-volume-muted-symbolic.svg"),
+    ("actions/24", "player-volume-muted.svg"),
+    ("actions/24", "player-volume-symbolic.svg"),
+    ("actions/24", "player-volume.svg"),
+    ("status/16", "audio-off-symbolic.svg"),
+    ("status/16", "audio-off.svg"),
+    ("status/16", "audio-on-symbolic.svg"),
+    ("status/16", "audio-on.svg"),
+    ("status/16", "audio-ready-symbolic.svg"),
+    ("status/16", "audio-ready.svg"),
+    ("status/16", "audio-volume-high-danger-symbolic.svg"),
+    ("status/16", "audio-volume-high-danger.svg"),
+    ("status/16", "audio-volume-high-symbolic.svg"),
+    ("status/16", "audio-volume-high-warning-symbolic.svg"),
+    ("status/16", "audio-volume-high-warning.svg"),
+    ("status/16", "audio-volume-high.svg"),
+    ("status/16", "audio-volume-low-symbolic.svg"),
+    ("status/16", "audio-volume-low.svg"),
+    ("status/16", "audio-volume-medium-symbolic.svg"),
+    ("status/16", "audio-volume-medium.svg"),
+    ("status/16", "audio-volume-muted-symbolic.svg"),
+    ("status/16", "audio-volume-muted.svg"),
+    ("status/16", "media-playback-paused-symbolic.svg"),
+    ("status/16", "media-playback-paused.svg"),
+    ("status/16", "media-playback-playing-symbolic.svg"),
+    ("status/16", "media-playback-playing.svg"),
+    ("status/16", "media-playback-stopped-symbolic.svg"),
+    ("status/16", "media-playback-stopped.svg"),
+    ("status/16", "microphone-sensitivity-high-symbolic.svg"),
+    ("status/16", "microphone-sensitivity-low-symbolic.svg"),
+    ("status/16", "microphone-sensitivity-medium-symbolic.svg"),
+    ("status/16", "microphone-sensitivity-muted-symbolic.svg"),
+    ("status/22", "audio-off-symbolic.svg"),
+    ("status/22", "audio-off.svg"),
+    ("status/22", "audio-on-symbolic.svg"),
+    ("status/22", "audio-on.svg"),
+    ("status/22", "audio-ready-symbolic.svg"),
+    ("status/22", "audio-ready.svg"),
+    ("status/22", "audio-volume-high-danger-symbolic.svg"),
+    ("status/22", "audio-volume-high-danger.svg"),
+    ("status/22", "audio-volume-high-symbolic.svg"),
+    ("status/22", "audio-volume-high-warning-symbolic.svg"),
+    ("status/22", "audio-volume-high-warning.svg"),
+    ("status/22", "audio-volume-high.svg"),
+    ("status/22", "audio-volume-low-symbolic.svg"),
+    ("status/22", "audio-volume-low.svg"),
+    ("status/22", "audio-volume-medium-symbolic.svg"),
+    ("status/22", "audio-volume-medium.svg"),
+    ("status/22", "audio-volume-muted-symbolic.svg"),
+    ("status/22", "audio-volume-muted.svg"),
+    ("status/22", "media-playback-paused-symbolic.svg"),
+    ("status/22", "media-playback-paused.svg"),
+    ("status/22", "media-playback-playing-symbolic.svg"),
+    ("status/22", "media-playback-playing.svg"),
+    ("status/22", "media-playback-stopped-symbolic.svg"),
+    ("status/22", "media-playback-stopped.svg"),
+    ("status/22", "microphone-sensitivity-high-symbolic.svg"),
+    ("status/22", "microphone-sensitivity-low-symbolic.svg"),
+    ("status/22", "microphone-sensitivity-medium-symbolic.svg"),
+    ("status/22", "microphone-sensitivity-muted-symbolic.svg"),
+    ("status/24", "audio-off-symbolic.svg"),
+    ("status/24", "audio-off.svg"),
+    ("status/24", "audio-on-symbolic.svg"),
+    ("status/24", "audio-on.svg"),
+    ("status/24", "audio-ready-symbolic.svg"),
+    ("status/24", "audio-ready.svg"),
+    ("status/24", "audio-volume-high-danger-symbolic.svg"),
+    ("status/24", "audio-volume-high-danger.svg"),
+    ("status/24", "audio-volume-high-symbolic.svg"),
+    ("status/24", "audio-volume-high-warning-symbolic.svg"),
+    ("status/24", "audio-volume-high-warning.svg"),
+    ("status/24", "audio-volume-high.svg"),
+    ("status/24", "audio-volume-low-symbolic.svg"),
+    ("status/24", "audio-volume-low.svg"),
+    ("status/24", "audio-volume-medium-symbolic.svg"),
+    ("status/24", "audio-volume-medium.svg"),
+    ("status/24", "audio-volume-muted-symbolic.svg"),
+    ("status/24", "audio-volume-muted.svg"),
+    ("status/24", "media-playback-paused-symbolic.svg"),
+    ("status/24", "media-playback-paused.svg"),
+    ("status/24", "media-playback-playing-symbolic.svg"),
+    ("status/24", "media-playback-playing.svg"),
+    ("status/24", "media-playback-stopped-symbolic.svg"),
+    ("status/24", "media-playback-stopped.svg"),
+    ("status/24", "microphone-sensitivity-high-symbolic.svg"),
+    ("status/24", "microphone-sensitivity-low-symbolic.svg"),
+    ("status/24", "microphone-sensitivity-medium-symbolic.svg"),
+    ("status/24", "microphone-sensitivity-muted-symbolic.svg"),
+)
+
 
 class UndercoverError(RuntimeError):
     pass
@@ -613,6 +736,51 @@ class UndercoverMode:
     def _managed_icon_theme_asset_names(self) -> list[str]:
         return sorted(set(_MANAGED_ICON_THEME_FILES.values()))
 
+    def _managed_icon_theme_source_roots(self, preset: Preset) -> list[Path]:
+        spec = self._managed_icon_theme_spec(preset.icon_theme)
+        if spec is None:
+            return []
+        roots: list[Path] = []
+        for theme_name in spec["inherits"].split(","):
+            candidate = Path("/usr/share/icons") / theme_name.strip()
+            if candidate.exists():
+                roots.append(candidate)
+        return roots
+
+    def _icon_theme_directory_lines(self, directory: str) -> list[str]:
+        section_context = {
+            "actions": "Actions",
+            "mimetypes": "MimeTypes",
+            "places": "Places",
+            "status": "Status",
+        }
+        context_key, size_key = directory.split("/", 1)
+        if size_key == "scalable":
+            size = 64
+            min_size = 16
+            max_size = 512
+            icon_type = "Scalable"
+        elif size_key == "symbolic":
+            size = 16
+            min_size = 16
+            max_size = 16
+            icon_type = "Scalable"
+        else:
+            size = int(size_key)
+            min_size = size
+            max_size = size
+            icon_type = "Fixed"
+
+        return [
+            f"[{directory}]",
+            f"Context={section_context[context_key]}",
+            f"Size={size}",
+            f"Type={icon_type}",
+            f"MinSize={min_size}",
+            f"MaxSize={max_size}",
+            "",
+        ]
+
     def reset(self) -> dict[str, Any]:
         removed: list[str] = []
         preserved: list[str] = []
@@ -692,28 +860,14 @@ class UndercoverMode:
             return None
 
         target_dir = self.icons_root / preset.icon_theme
-        theme_dirs = sorted({directory for directory, _filename in _MANAGED_ICON_THEME_FILES})
-        section_context = {
-            "actions": "Actions",
-            "mimetypes": "MimeTypes",
-            "places": "Places",
-        }
+        theme_dirs = sorted(
+            {directory for directory, _filename in _MANAGED_ICON_THEME_FILES}
+            | {directory for directory, _filename in _MANAGED_ICON_THEME_PASSTHROUGH_FILES}
+        )
         index_theme = "\n".join(
             ["[Icon Theme]", f"Name={spec['name']}", f"Inherits={spec['inherits']}"]
             + [f"Directories={','.join(theme_dirs)}", ""]
-            + [
-                line
-                for directory in theme_dirs
-                for line in (
-                    f"[{directory}]",
-                    f"Context={section_context[directory.split('/', 1)[0]]}",
-                    f"Size={16 if directory.endswith('/symbolic') else 64}",
-                    "Type=Scalable",
-                    "MinSize=16",
-                    f"MaxSize={16 if directory.endswith('/symbolic') else 512}",
-                    "",
-                )
-            ]
+            + [line for directory in theme_dirs for line in self._icon_theme_directory_lines(directory)]
         )
         self._write_text(target_dir / "index.theme", index_theme + "\n")
 
@@ -723,6 +877,15 @@ class UndercoverMode:
                 raise UndercoverError(f"Icon asset not found: {source}")
             destination = target_dir / relative_dir / filename
             self._copy_file(source, destination)
+
+        for relative_dir, filename in _MANAGED_ICON_THEME_PASSTHROUGH_FILES:
+            destination = target_dir / relative_dir / filename
+            for root in self._managed_icon_theme_source_roots(preset):
+                candidate = root / relative_dir / filename
+                if not candidate.exists():
+                    continue
+                self._copy_file(candidate, destination)
+                break
 
         log.debug("Installed icon theme %s -> %s", preset.icon_theme, target_dir)
         return target_dir

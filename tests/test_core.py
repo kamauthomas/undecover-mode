@@ -517,7 +517,10 @@ class TestManagedIconTheme:
         theme_root = manager._install_managed_icon_theme(preset)
 
         assert theme_root == manager.icons_root / "ParrotUndercoverWin10LightIcons"
-        assert (theme_root / "index.theme").exists()
+        index_theme = (theme_root / "index.theme").read_text(encoding="utf-8")
+        assert "[status/16]" in index_theme
+        assert "Context=Status" in index_theme
+        assert "[actions/22]" in index_theme
         assert (
             theme_root / "places" / "scalable" / "folder.svg"
         ).read_text(encoding="utf-8") == "<svg/>"
@@ -530,6 +533,10 @@ class TestManagedIconTheme:
         assert (
             theme_root / "places" / "symbolic" / "folder-download-symbolic.svg"
         ).read_text(encoding="utf-8") == "<svg/>"
+        audio_icon = theme_root / "status" / "16" / "audio-volume-medium-symbolic.svg"
+        media_icon = theme_root / "actions" / "22" / "media-playback-start-symbolic.svg"
+        assert audio_icon.exists()
+        assert media_icon.exists()
 
 
 class TestProtectedTools:
