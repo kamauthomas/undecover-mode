@@ -407,6 +407,7 @@ class UndercoverMode:
         self.tracked_files = [
             self.home / ".config" / "kdeglobals",
             self.home / ".config" / "dolphinrc",
+            self.home / ".config" / "kscreenlockerrc",
             self.home / ".config" / "plasma-org.kde.plasma.desktop-appletsrc",
             self.home / ".config" / "plasmarc",
             self.home / ".config" / "kcminputrc",
@@ -606,6 +607,7 @@ class UndercoverMode:
                 log.info("Applying base Plasma/KDE settings")
                 self._apply_base_settings(preset)
                 self._apply_file_manager_settings()
+                self._write_screen_lock_settings(preset, asset_paths)
 
                 log.info("Applying live Plasma appearance changes")
                 live_apply = self._apply_live_appearance(preset, asset_paths)
@@ -955,6 +957,7 @@ class UndercoverMode:
 
     def _install_look_and_feel_package(self, preset: Preset, asset_paths: dict[str, Path]) -> Path:
         target_dir = self.look_and_feel_root / preset.package_id
+        splash_background = "#1f1f1f" if preset.prefer_dark else "#0078d7"
         replacements = {
             "__PACKAGE_ID__": preset.package_id,
             "__PACKAGE_NAME__": preset.package_name,
@@ -964,6 +967,8 @@ class UndercoverMode:
             "__ICON_THEME__": preset.icon_theme,
             "__CURSOR_THEME__": preset.cursor_theme,
             "__START_ICON_PATH__": str(asset_paths["start_icon"].resolve()),
+            "__START_ICON_URI__": asset_paths["start_icon"].resolve().as_uri(),
+            "__SPLASH_BACKGROUND__": splash_background,
             "__TASK_LAUNCHERS__": ",".join(
                 f"applications:{item}" for item in preset.launcher_desktop_ids
             ),
@@ -972,6 +977,10 @@ class UndercoverMode:
         template_files = {
             self.template_root / "metadata.json": target_dir / "metadata.json",
             self.template_root / "contents" / "defaults": target_dir / "contents" / "defaults",
+            self.template_root / "contents" / "splash" / "Splash.qml": target_dir
+            / "contents"
+            / "splash"
+            / "Splash.qml",
             self.template_root
             / "contents"
             / "layouts"
@@ -1177,7 +1186,7 @@ class UndercoverMode:
                         "KSplash",
                         "--key",
                         "Theme",
-                        "org.kde.Breeze",
+                        preset.package_id,
                     ],
                 ]
             )
@@ -1196,6 +1205,66 @@ class UndercoverMode:
             ],
         )
         self._write_text(defaults_root / "package", f"{preset.package_id}\n")
+        for command in commands:
+            log.debug("Running: %s", " ".join(command))
+            self._run(command)
+
+    def _write_screen_lock_settings(self, preset: Preset, asset_paths: dict[str, Path]) -> None:
+        screenlockerrc = self.home / ".config" / "kscreenlockerrc"
+        commands = [
+            [
+                "kwriteconfig6",
+                "--file",
+                str(screenlockerrc),
+                "--group",
+                "Greeter",
+                "--key",
+                "Theme",
+                preset.plasma_theme,
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(screenlockerrc),
+                "--group",
+                "Greeter",
+                "--key",
+                "WallpaperPlugin",
+                "org.kde.image",
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(screenlockerrc),
+                "--group",
+                "Greeter",
+                "--group",
+                "Wallpaper",
+                "--group",
+                "org.kde.image",
+                "--group",
+                "General",
+                "--key",
+                "Image",
+                str(asset_paths["wallpaper"]),
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(screenlockerrc),
+                "--group",
+                "Greeter",
+                "--group",
+                "Wallpaper",
+                "--group",
+                "org.kde.image",
+                "--group",
+                "General",
+                "--key",
+                "PreviewImage",
+                str(asset_paths["wallpaper"]),
+            ],
+        ]
         for command in commands:
             log.debug("Running: %s", " ".join(command))
             self._run(command)

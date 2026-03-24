@@ -259,6 +259,11 @@ class TestTemplateExpansion:
         assert "__START_ICON_PATH__" not in layout_js
         assert 'writeConfig("icon", "desktop-symbolic");' in layout_js
         assert 'clock.writeConfig("use24hFormat", "1");' in layout_js
+        splash_qml = (package_path / "contents" / "splash" / "Splash.qml").read_text(
+            encoding="utf-8"
+        )
+        assert "__START_ICON_URI__" not in splash_qml
+        assert "__SPLASH_BACKGROUND__" not in splash_qml
 
 
 class TestLiveAppearance:
@@ -492,6 +497,7 @@ class TestBaseSettings:
         assert any("BorderlessMaximizedWindows" in call and "true" in call for call in calls)
         assert any("activeFont" in call and "Liberation Sans,10,-1,5,50,0,0,0,0,0" in call for call in calls)
         assert any("fixed" in call and "Liberation Mono,10,-1,5,50,0,0,0,0,0" in call for call in calls)
+        assert any("ksplashrc" in " ".join(call) and "org.test.preset" in call for call in calls)
 
 
 class TestGtkSettings:
@@ -504,6 +510,33 @@ class TestGtkSettings:
         gtk2 = (fake_home / ".config" / "gtkrc-2.0").read_text(encoding="utf-8")
         assert "gtk-font-name=Liberation Sans 10" in gtk3
         assert 'gtk-font-name="Liberation Sans 10"' in gtk2
+
+
+class TestScreenLockSettings:
+    def test_writes_lock_screen_theme_and_wallpaper(
+        self, manager: UndercoverMode, fake_home: Path
+    ) -> None:
+        preset = manager.get_preset("test")
+        calls: list[list[str]] = []
+
+        def fake_run(command: list[str], **_: object) -> dict[str, object]:
+            calls.append(command)
+            return {"command": command, "returncode": 0, "stdout": "", "stderr": ""}
+
+        manager._run = fake_run  # type: ignore[method-assign]
+        wallpaper = fake_home / "wallpaper.svg"
+        wallpaper.write_text("<svg/>", encoding="utf-8")
+
+        manager._write_screen_lock_settings(
+            preset,
+            {"wallpaper": wallpaper, "start_icon": fake_home / "start.svg"},
+        )
+
+        screenlockerrc = str(fake_home / ".config" / "kscreenlockerrc")
+        assert all(screenlockerrc in call for call in calls)
+        assert any("WallpaperPlugin" in call and "org.kde.image" in call for call in calls)
+        assert any("PreviewImage" in call and str(wallpaper) in call for call in calls)
+        assert any("Theme" in call and "default" in call for call in calls)
 
 
 class TestFileManagerSettings:

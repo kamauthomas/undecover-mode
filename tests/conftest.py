@@ -57,6 +57,8 @@ def manager(tmp_path: Path, fake_home: Path, monkeypatch: pytest.MonkeyPatch) ->
     assets_dir.mkdir()
     templates_dir = package_root / "templates" / "look-and-feel" / "contents" / "layouts"
     templates_dir.mkdir(parents=True)
+    splash_dir = package_root / "templates" / "look-and-feel" / "contents" / "splash"
+    splash_dir.mkdir(parents=True)
     (package_root / "templates" / "look-and-feel" / "contents" / "defaults").write_text(
         "wallpaper=__WALLPAPER_URI__\n", encoding="utf-8"
     )
@@ -75,6 +77,10 @@ def manager(tmp_path: Path, fake_home: Path, monkeypatch: pytest.MonkeyPatch) ->
             'showDesktop.writeConfig("icon", "desktop-symbolic");\n'
             'var x = "__START_ICON_PATH__";\n'
         ),
+        encoding="utf-8",
+    )
+    (splash_dir / "Splash.qml").write_text(
+        'Image { source: "__START_ICON_URI__" }\nRectangle { color: "__SPLASH_BACKGROUND__" }\n',
         encoding="utf-8",
     )
 

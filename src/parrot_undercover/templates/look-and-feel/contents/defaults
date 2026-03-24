@@ -22,7 +22,7 @@ library=org.kde.breeze
 theme=Breeze
 
 [KSplash]
-Theme=org.kde.Breeze
+Theme=__PACKAGE_ID__
 
 [Desktop][org.kde.plasma.desktop]
 Containment=org.kde.plasma.folder
