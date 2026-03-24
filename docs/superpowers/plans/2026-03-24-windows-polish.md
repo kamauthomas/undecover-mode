@@ -1,5 +1,27 @@
 # Windows Polish Implementation Plan
 
+## Implementation Status
+
+Status: completed on 2026-03-24
+
+Implemented outcome:
+
+- The Windows-style Plasma taskbar is now applied deterministically and stale top-panel containments are pruned from `plasma-org.kde.plasma.desktop-appletsrc` during enable.
+- `Konsole` and `Dolphin` are disguised as `Command Prompt` and `File Explorer` with managed `.desktop` overrides.
+- The panel layout includes search, CPU/RAM monitors, tray, clock, and a corrected desktop-peek control.
+- The clock is explicitly pinned to 24-hour format in the generated layout.
+- A managed Windows-like icon theme overlay now covers folder/file icons across more KDE alias names and symbolic/action variants, so Dolphin and desktop icons no longer fall back inconsistently to Breeze.
+- Dolphin is tuned closer to Windows File Explorer behavior and presentation.
+- The live apply path restarts `plasma-plasmashell.service` through systemd instead of manually replacing `plasmashell`.
+
+Validated state:
+
+- `pytest`, `mypy`, and `ruff` passed after the final icon-coverage and panel-cleanup fixes.
+- Live `win10-dark` apply was verified on Plasma 6/X11 with a single bottom panel, 24-hour clock, corrected desktop-peek icon, and expanded Windows-like folder coverage.
+- Latest related commits:
+  - `abcdfbe` `Refine undercover panel and explorer theming`
+  - `bca172c` `Expand undercover icon theme coverage`
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make the undercover desktop indistinguishable from Windows 10 at a glance by fixing the taskbar layout, adding CMD/File Explorer icon disguises, adding CPU/RAM monitors, and fixing the settings apply order.
