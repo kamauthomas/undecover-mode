@@ -258,6 +258,7 @@ class TestTemplateExpansion:
         ).read_text(encoding="utf-8")
         assert "__START_ICON_PATH__" not in layout_js
         assert 'writeConfig("icon", "desktop-symbolic");' in layout_js
+        assert 'clock.writeConfig("use24hFormat", "1");' in layout_js
 
 
 class TestLiveAppearance:
@@ -522,6 +523,12 @@ class TestManagedIconTheme:
         ).read_text(encoding="utf-8") == "<svg/>"
         assert (
             theme_root / "mimetypes" / "scalable" / "text-plain.svg"
+        ).read_text(encoding="utf-8") == "<svg/>"
+        assert (
+            theme_root / "actions" / "scalable" / "folder-open-recent.svg"
+        ).read_text(encoding="utf-8") == "<svg/>"
+        assert (
+            theme_root / "places" / "symbolic" / "folder-download-symbolic.svg"
         ).read_text(encoding="utf-8") == "<svg/>"
 
 

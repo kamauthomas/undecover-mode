@@ -67,6 +67,9 @@ def manager(tmp_path: Path, fake_home: Path, monkeypatch: pytest.MonkeyPatch) ->
         (
             'var panel = new Panel;\n'
             'panel.location = "bottom";\n'
+            'var clock = panel.addWidget("org.kde.plasma.digitalclock");\n'
+            'clock.currentConfigGroup = ["Appearance"];\n'
+            'clock.writeConfig("use24hFormat", "1");\n'
             'var showDesktop = panel.addWidget("org.kde.plasma.showdesktop");\n'
             'showDesktop.currentConfigGroup = ["General"];\n'
             'showDesktop.writeConfig("icon", "desktop-symbolic");\n'

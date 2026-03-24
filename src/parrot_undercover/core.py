@@ -40,33 +40,70 @@ _MANAGED_ICON_THEME_SPECS: dict[str, dict[str, str]] = {
 }
 
 _MANAGED_ICON_THEME_FILES: dict[tuple[str, str], str] = {
-    ("mimetypes", "application-octet-stream.svg"): "windows-file.svg",
-    ("mimetypes", "application-pdf.svg"): "windows-file.svg",
-    ("mimetypes", "application-x-desktop.svg"): "windows-file.svg",
-    ("mimetypes", "application-x-executable.svg"): "windows-file.svg",
-    ("mimetypes", "audio-x-generic.svg"): "windows-file.svg",
-    ("mimetypes", "image-x-generic.svg"): "windows-file.svg",
-    ("mimetypes", "inode-directory.svg"): "windows-folder.svg",
-    ("mimetypes", "inode-symlink.svg"): "windows-file.svg",
-    ("mimetypes", "text-plain.svg"): "windows-text-file.svg",
-    ("mimetypes", "text-x-generic.svg"): "windows-text-file.svg",
-    ("mimetypes", "unknown.svg"): "windows-file.svg",
-    ("mimetypes", "video-x-generic.svg"): "windows-file.svg",
-    ("places", "folder.svg"): "windows-folder.svg",
-    ("places", "folder-desktop.svg"): "windows-folder-desktop.svg",
-    ("places", "folder-documents.svg"): "windows-folder-documents.svg",
-    ("places", "folder-downloads.svg"): "windows-folder-downloads.svg",
-    ("places", "folder-images.svg"): "windows-folder-pictures.svg",
-    ("places", "folder-music.svg"): "windows-folder-music.svg",
-    ("places", "folder-network.svg"): "windows-folder.svg",
-    ("places", "folder-open.svg"): "windows-folder-open.svg",
-    ("places", "folder-pictures.svg"): "windows-folder-pictures.svg",
-    ("places", "folder-publicshare.svg"): "windows-folder.svg",
-    ("places", "folder-remote.svg"): "windows-folder.svg",
-    ("places", "folder-templates.svg"): "windows-folder.svg",
-    ("places", "folder-videos.svg"): "windows-folder-videos.svg",
-    ("places", "user-desktop.svg"): "windows-folder-desktop.svg",
-    ("places", "user-home.svg"): "windows-folder.svg",
+    ("actions/scalable", "folder-open-recent.svg"): "windows-folder-open.svg",
+    ("actions/scalable", "folder-symbolic.svg"): "windows-folder.svg",
+    ("actions/symbolic", "folder-open-recent-symbolic.svg"): "windows-folder-open.svg",
+    ("actions/symbolic", "folder-symbolic.svg"): "windows-folder.svg",
+    ("mimetypes/scalable", "application-octet-stream.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-pdf.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-desktop.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "application-x-executable.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "audio-x-generic.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "image-x-generic.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "inode-directory.svg"): "windows-folder.svg",
+    ("mimetypes/scalable", "inode-symlink.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "text-plain.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "text-x-generic.svg"): "windows-text-file.svg",
+    ("mimetypes/scalable", "unknown.svg"): "windows-file.svg",
+    ("mimetypes/scalable", "video-x-generic.svg"): "windows-file.svg",
+    ("mimetypes/symbolic", "inode-directory-symbolic.svg"): "windows-folder.svg",
+    ("places/scalable", "desktop.svg"): "windows-folder-desktop.svg",
+    ("places/scalable", "folder-bookmark.svg"): "windows-folder.svg",
+    ("places/scalable", "folder-bookmarks.svg"): "windows-folder.svg",
+    ("places/scalable", "folder-desktop.svg"): "windows-folder-desktop.svg",
+    ("places/scalable", "folder-documents.svg"): "windows-folder-documents.svg",
+    ("places/scalable", "folder-download.svg"): "windows-folder-downloads.svg",
+    ("places/scalable", "folder-downloads.svg"): "windows-folder-downloads.svg",
+    ("places/scalable", "folder-favorites.svg"): "windows-folder.svg",
+    ("places/scalable", "folder-home.svg"): "windows-folder.svg",
+    ("places/scalable", "folder-images.svg"): "windows-folder-pictures.svg",
+    ("places/scalable", "folder-music.svg"): "windows-folder-music.svg",
+    ("places/scalable", "folder-network.svg"): "windows-folder.svg",
+    ("places/scalable", "folder-open-recent.svg"): "windows-folder-open.svg",
+    ("places/scalable", "folder-open.svg"): "windows-folder-open.svg",
+    ("places/scalable", "folder-pictures.svg"): "windows-folder-pictures.svg",
+    ("places/scalable", "folder-public.svg"): "windows-folder.svg",
+    ("places/scalable", "folder-publicshare.svg"): "windows-folder.svg",
+    ("places/scalable", "folder-remote.svg"): "windows-folder.svg",
+    ("places/scalable", "folder-saved-search.svg"): "windows-folder.svg",
+    ("places/scalable", "folder-templates.svg"): "windows-folder.svg",
+    ("places/scalable", "folder-videos.svg"): "windows-folder-videos.svg",
+    ("places/scalable", "folder.svg"): "windows-folder.svg",
+    ("places/scalable", "user-desktop.svg"): "windows-folder-desktop.svg",
+    ("places/scalable", "user-home.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-bookmark-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-bookmarks-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-desktop-symbolic.svg"): "windows-folder-desktop.svg",
+    ("places/symbolic", "folder-documents-symbolic.svg"): "windows-folder-documents.svg",
+    ("places/symbolic", "folder-download-symbolic.svg"): "windows-folder-downloads.svg",
+    ("places/symbolic", "folder-downloads-symbolic.svg"): "windows-folder-downloads.svg",
+    ("places/symbolic", "folder-favorites-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-home-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-images-symbolic.svg"): "windows-folder-pictures.svg",
+    ("places/symbolic", "folder-music-symbolic.svg"): "windows-folder-music.svg",
+    ("places/symbolic", "folder-network-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-open-recent-symbolic.svg"): "windows-folder-open.svg",
+    ("places/symbolic", "folder-open-symbolic.svg"): "windows-folder-open.svg",
+    ("places/symbolic", "folder-pictures-symbolic.svg"): "windows-folder-pictures.svg",
+    ("places/symbolic", "folder-public-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-publicshare-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-remote-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-saved-search-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-templates-symbolic.svg"): "windows-folder.svg",
+    ("places/symbolic", "folder-videos-symbolic.svg"): "windows-folder-videos.svg",
+    ("places/symbolic", "user-desktop-symbolic.svg"): "windows-folder-desktop.svg",
+    ("places/symbolic", "user-home-symbolic.svg"): "windows-folder.svg",
 }
 
 
@@ -655,35 +692,36 @@ class UndercoverMode:
             return None
 
         target_dir = self.icons_root / preset.icon_theme
+        theme_dirs = sorted({directory for directory, _filename in _MANAGED_ICON_THEME_FILES})
+        section_context = {
+            "actions": "Actions",
+            "mimetypes": "MimeTypes",
+            "places": "Places",
+        }
         index_theme = "\n".join(
-            [
-                "[Icon Theme]",
-                f"Name={spec['name']}",
-                f"Inherits={spec['inherits']}",
-                "Directories=places/scalable,mimetypes/scalable",
-                "",
-                "[places/scalable]",
-                "Context=Places",
-                "Size=64",
-                "Type=Scalable",
-                "MinSize=16",
-                "MaxSize=512",
-                "",
-                "[mimetypes/scalable]",
-                "Context=MimeTypes",
-                "Size=64",
-                "Type=Scalable",
-                "MinSize=16",
-                "MaxSize=512",
+            ["[Icon Theme]", f"Name={spec['name']}", f"Inherits={spec['inherits']}"]
+            + [f"Directories={','.join(theme_dirs)}", ""]
+            + [
+                line
+                for directory in theme_dirs
+                for line in (
+                    f"[{directory}]",
+                    f"Context={section_context[directory.split('/', 1)[0]]}",
+                    f"Size={16 if directory.endswith('/symbolic') else 64}",
+                    "Type=Scalable",
+                    "MinSize=16",
+                    f"MaxSize={16 if directory.endswith('/symbolic') else 512}",
+                    "",
+                )
             ]
         )
         self._write_text(target_dir / "index.theme", index_theme + "\n")
 
-        for (category, filename), asset_name in _MANAGED_ICON_THEME_FILES.items():
+        for (relative_dir, filename), asset_name in _MANAGED_ICON_THEME_FILES.items():
             source = self.assets_root / asset_name
             if not source.exists():
                 raise UndercoverError(f"Icon asset not found: {source}")
-            destination = target_dir / category / "scalable" / filename
+            destination = target_dir / relative_dir / filename
             self._copy_file(source, destination)
 
         log.debug("Installed icon theme %s -> %s", preset.icon_theme, target_dir)
