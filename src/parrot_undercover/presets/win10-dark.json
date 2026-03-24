@@ -8,9 +8,9 @@
   "color_scheme": "ParrotUndercoverWin10Dark",
   "color_scheme_asset": "windows10-dark.colors",
   "plasma_theme": "breeze-dark",
-  "icon_theme": "breeze-dark",
+  "icon_theme": "ParrotUndercoverWin10DarkIcons",
   "gtk_theme": "Windows 10 Dark",
-  "gtk_icon_theme": "breeze-dark",
+  "gtk_icon_theme": "ParrotUndercoverWin10DarkIcons",
   "cursor_theme": "breeze_cursors",
   "prefer_dark": true,
   "launcher_desktop_ids": [

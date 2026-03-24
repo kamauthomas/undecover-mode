@@ -6,7 +6,9 @@
 
 - Applies a Windows-style Plasma preset.
 - Installs a matching custom color scheme for more Windows-like light and dark accents.
+- Installs a custom icon-theme overlay so folders and common file types read more like Windows.
 - Installs a generated look-and-feel package in the user profile.
+- Tweaks Dolphin to behave more like File Explorer.
 - Hides Parrot security launchers from menus with user-local `.desktop` overrides.
 - Adds an `Administrative Tools` launcher that asks for your password before showing hidden GUI tools.
 - Leaves command-line access to the underlying tools untouched.

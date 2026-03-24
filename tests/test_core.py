@@ -257,6 +257,7 @@ class TestTemplateExpansion:
             package_path / "contents" / "layouts" / "org.kde.plasma.desktop-layout.js"
         ).read_text(encoding="utf-8")
         assert "__START_ICON_PATH__" not in layout_js
+        assert 'writeConfig("icon", "desktop-symbolic");' in layout_js
 
 
 class TestLiveAppearance:
@@ -337,6 +338,63 @@ class TestLiveAppearance:
         assert calls[0][0] == "qdbus6"
         assert "existingPanels[i].remove()" in calls[0][-1]
         assert 'panel.location = "bottom";' in calls[0][-1]
+
+    def test_prunes_stale_panel_containments(
+        self, manager: UndercoverMode, fake_home: Path
+    ) -> None:
+        appletsrc = fake_home / ".config" / "plasma-org.kde.plasma.desktop-appletsrc"
+        appletsrc.write_text(
+            """
+[Containments][73]
+location=3
+plugin=org.kde.panel
+
+[Containments][73][Applets][101]
+plugin=org.kde.plasma.kicker
+
+[Containments][73][Applets][101][Configuration][General]
+customButtonImage=distributor-logo-parrot
+
+[Containments][73][Applets][102]
+plugin=org.kde.plasma.systemtray
+
+[Containments][73][Applets][102][Configuration]
+SystrayContainmentId=79
+
+[Containments][79]
+plugin=org.kde.plasma.private.systemtray
+
+[Containments][137]
+location=4
+plugin=org.kde.panel
+
+[Containments][137][Applets][138]
+plugin=org.kde.plasma.kicker
+
+[Containments][137][Applets][138][Configuration][General]
+customButtonImage=/tmp/fake-start.svg
+
+[Containments][137][Applets][139]
+plugin=org.kde.plasma.systemtray
+
+[Containments][137][Applets][139][Configuration]
+SystrayContainmentId=145
+
+[Containments][145]
+plugin=org.kde.plasma.private.systemtray
+""".lstrip(),
+            encoding="utf-8",
+        )
+
+        result = manager._prune_stale_panel_containments(Path("/tmp/fake-start.svg"))
+
+        updated = appletsrc.read_text(encoding="utf-8")
+        assert result["removed_panel_ids"] == ["73"]
+        assert result["removed_systray_ids"] == ["79"]
+        assert "[Containments][73]" not in updated
+        assert "[Containments][79]" not in updated
+        assert "[Containments][137]" in updated
+        assert "[Containments][145]" in updated
 
     def test_refresh_falls_back_to_qdbus_method(
         self, manager: UndercoverMode, monkeypatch: pytest.MonkeyPatch
@@ -424,6 +482,47 @@ class TestBaseSettings:
         assert any(defaults_kdeglobals in call for call in calls)
         assert any(defaults_plasmarc in call for call in calls)
         assert any(user_kdeglobals in call for call in calls)
+
+
+class TestFileManagerSettings:
+    def test_writes_dolphin_preferences(self, manager: UndercoverMode, fake_home: Path) -> None:
+        calls: list[list[str]] = []
+
+        def fake_run(command: list[str], **_: object) -> dict[str, object]:
+            calls.append(command)
+            return {"command": command, "returncode": 0, "stdout": "", "stderr": ""}
+
+        manager._run = fake_run  # type: ignore[method-assign]
+
+        manager._apply_file_manager_settings()
+
+        dolphinrc = str(fake_home / ".config" / "dolphinrc")
+        assert any(dolphinrc in call for call in calls)
+        assert any("--delete" in call and "DoubleClickViewAction" in call for call in calls)
+        assert any("ShowFullPath" in call for call in calls)
+
+
+class TestManagedIconTheme:
+    def test_installs_managed_icon_theme(self, manager: UndercoverMode) -> None:
+        from tests.conftest import MINIMAL_PRESET, write_preset
+
+        managed_preset = deepcopy(MINIMAL_PRESET)
+        managed_preset["id"] = "managed"
+        managed_preset["icon_theme"] = "ParrotUndercoverWin10LightIcons"
+        managed_preset["gtk_icon_theme"] = "ParrotUndercoverWin10LightIcons"
+        write_preset(manager.presets_root, managed_preset, "managed.json")
+
+        preset = manager.get_preset("managed")
+        theme_root = manager._install_managed_icon_theme(preset)
+
+        assert theme_root == manager.icons_root / "ParrotUndercoverWin10LightIcons"
+        assert (theme_root / "index.theme").exists()
+        assert (
+            theme_root / "places" / "scalable" / "folder.svg"
+        ).read_text(encoding="utf-8") == "<svg/>"
+        assert (
+            theme_root / "mimetypes" / "scalable" / "text-plain.svg"
+        ).read_text(encoding="utf-8") == "<svg/>"
 
 
 class TestProtectedTools:
@@ -646,10 +745,16 @@ class TestEnableIntegration:
             "_apply_live_appearance",
             lambda *_args: {"attempted": False, "applied": [], "notes": []},
         )
+        monkeypatch.setattr(manager, "_apply_file_manager_settings", lambda *_args: None)
         monkeypatch.setattr(
             manager,
             "_apply_live_layout",
             lambda *_args: {"attempted": False, "applied": False, "notes": []},
+        )
+        monkeypatch.setattr(
+            manager,
+            "_prune_stale_panel_containments",
+            lambda *_args: {"removed_panel_ids": [], "removed_systray_ids": [], "notes": []},
         )
         monkeypatch.setattr(manager, "_write_gtk_settings", lambda *_args: None)
         monkeypatch.setattr(manager, "_hide_security_launchers", lambda *_args: [])

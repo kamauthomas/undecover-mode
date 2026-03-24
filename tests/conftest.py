@@ -64,7 +64,15 @@ def manager(tmp_path: Path, fake_home: Path, monkeypatch: pytest.MonkeyPatch) ->
         json.dumps({"KPlugin": {"Id": "__PACKAGE_ID__"}}), encoding="utf-8"
     )
     (templates_dir / "org.kde.plasma.desktop-layout.js").write_text(
-        'var x = "__START_ICON_PATH__";\n', encoding="utf-8"
+        (
+            'var panel = new Panel;\n'
+            'panel.location = "bottom";\n'
+            'var showDesktop = panel.addWidget("org.kde.plasma.showdesktop");\n'
+            'showDesktop.currentConfigGroup = ["General"];\n'
+            'showDesktop.writeConfig("icon", "desktop-symbolic");\n'
+            'var x = "__START_ICON_PATH__";\n'
+        ),
+        encoding="utf-8",
     )
 
     # Create preset
@@ -75,6 +83,19 @@ def manager(tmp_path: Path, fake_home: Path, monkeypatch: pytest.MonkeyPatch) ->
     (assets_dir / "wallpaper.svg").write_text("<svg/>", encoding="utf-8")
     (assets_dir / "start.svg").write_text("<svg/>", encoding="utf-8")
     (assets_dir / "test.colors").write_text("[General]\nColorScheme=TestColors\n", encoding="utf-8")
+    for asset_name in (
+        "windows-file.svg",
+        "windows-folder.svg",
+        "windows-folder-open.svg",
+        "windows-folder-documents.svg",
+        "windows-folder-downloads.svg",
+        "windows-folder-pictures.svg",
+        "windows-folder-music.svg",
+        "windows-folder-videos.svg",
+        "windows-folder-desktop.svg",
+        "windows-text-file.svg",
+    ):
+        (assets_dir / asset_name).write_text("<svg/>", encoding="utf-8")
 
     monkeypatch.setattr(Path, "home", lambda: fake_home)
 

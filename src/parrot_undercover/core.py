@@ -5,6 +5,7 @@ import getpass
 import json
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -18,6 +19,55 @@ from pathlib import Path
 from typing import Any
 
 log = logging.getLogger("parrot-undercover")
+
+_SECTION_HEADER_RE = re.compile(r"^\[(.+)\]\s*$")
+_TOP_CONTAINMENT_RE = re.compile(r"^Containments\]\[(\d+)$")
+_CONTAINMENT_SECTION_RE = re.compile(r"^Containments\]\[(\d+)(?:\].*)?$")
+_APPLET_SECTION_RE = re.compile(r"^Containments\]\[(\d+)\]\[Applets\]\[(\d+)$")
+_APPLET_CONFIG_SECTION_RE = re.compile(
+    r"^Containments\]\[(\d+)\]\[Applets\]\[(\d+)\]\[Configuration(?:\]\[General)?$"
+)
+
+_MANAGED_ICON_THEME_SPECS: dict[str, dict[str, str]] = {
+    "ParrotUndercoverWin10DarkIcons": {
+        "inherits": "breeze-dark,hicolor",
+        "name": "Parrot Undercover Windows 10 Dark Icons",
+    },
+    "ParrotUndercoverWin10LightIcons": {
+        "inherits": "breeze,hicolor",
+        "name": "Parrot Undercover Windows 10 Light Icons",
+    },
+}
+
+_MANAGED_ICON_THEME_FILES: dict[tuple[str, str], str] = {
+    ("mimetypes", "application-octet-stream.svg"): "windows-file.svg",
+    ("mimetypes", "application-pdf.svg"): "windows-file.svg",
+    ("mimetypes", "application-x-desktop.svg"): "windows-file.svg",
+    ("mimetypes", "application-x-executable.svg"): "windows-file.svg",
+    ("mimetypes", "audio-x-generic.svg"): "windows-file.svg",
+    ("mimetypes", "image-x-generic.svg"): "windows-file.svg",
+    ("mimetypes", "inode-directory.svg"): "windows-folder.svg",
+    ("mimetypes", "inode-symlink.svg"): "windows-file.svg",
+    ("mimetypes", "text-plain.svg"): "windows-text-file.svg",
+    ("mimetypes", "text-x-generic.svg"): "windows-text-file.svg",
+    ("mimetypes", "unknown.svg"): "windows-file.svg",
+    ("mimetypes", "video-x-generic.svg"): "windows-file.svg",
+    ("places", "folder.svg"): "windows-folder.svg",
+    ("places", "folder-desktop.svg"): "windows-folder-desktop.svg",
+    ("places", "folder-documents.svg"): "windows-folder-documents.svg",
+    ("places", "folder-downloads.svg"): "windows-folder-downloads.svg",
+    ("places", "folder-images.svg"): "windows-folder-pictures.svg",
+    ("places", "folder-music.svg"): "windows-folder-music.svg",
+    ("places", "folder-network.svg"): "windows-folder.svg",
+    ("places", "folder-open.svg"): "windows-folder-open.svg",
+    ("places", "folder-pictures.svg"): "windows-folder-pictures.svg",
+    ("places", "folder-publicshare.svg"): "windows-folder.svg",
+    ("places", "folder-remote.svg"): "windows-folder.svg",
+    ("places", "folder-templates.svg"): "windows-folder.svg",
+    ("places", "folder-videos.svg"): "windows-folder-videos.svg",
+    ("places", "user-desktop.svg"): "windows-folder-desktop.svg",
+    ("places", "user-home.svg"): "windows-folder.svg",
+}
 
 
 class UndercoverError(RuntimeError):
@@ -139,10 +189,12 @@ class UndercoverMode:
         self.lock_file = self.state_root / "lock"
         self.local_applications_dir = self.home / ".local" / "share" / "applications"
         self.color_schemes_root = self.home / ".local" / "share" / "color-schemes"
+        self.icons_root = self.home / ".local" / "share" / "icons"
         self.look_and_feel_root = self.home / ".local" / "share" / "plasma" / "look-and-feel"
 
         self.tracked_files = [
             self.home / ".config" / "kdeglobals",
+            self.home / ".config" / "dolphinrc",
             self.home / ".config" / "plasma-org.kde.plasma.desktop-appletsrc",
             self.home / ".config" / "plasmarc",
             self.home / ".config" / "kcminputrc",
@@ -233,6 +285,11 @@ class UndercoverMode:
                         missing_assets.append(str(si))
                     if not cs.exists():
                         missing_assets.append(str(cs))
+                    if self._managed_icon_theme_spec(preset.icon_theme):
+                        for asset_name in self._managed_icon_theme_asset_names():
+                            icon_asset = self.assets_root / asset_name
+                            if not icon_asset.exists():
+                                missing_assets.append(str(icon_asset))
                     if not self._gtk_theme_exists(preset.gtk_theme):
                         missing_gtk_themes.append(preset.gtk_theme)
         except UndercoverError as exc:
@@ -326,6 +383,9 @@ class UndercoverMode:
             try:
                 log.info("Installing assets for preset '%s'", preset.id)
                 asset_paths = self._install_assets(preset)
+
+                log.info("Installing icon theme")
+                self._install_managed_icon_theme(preset)
                 color_scheme_path = self._install_color_scheme(preset)
 
                 log.info("Installing look-and-feel package")
@@ -333,12 +393,19 @@ class UndercoverMode:
 
                 log.info("Applying base Plasma/KDE settings")
                 self._apply_base_settings(preset)
+                self._apply_file_manager_settings()
 
                 log.info("Applying live Plasma appearance changes")
                 live_apply = self._apply_live_appearance(preset, asset_paths)
 
                 log.info("Applying live Plasma panel layout")
                 live_layout = self._apply_live_layout(package_path)
+                panel_cleanup = self._prune_stale_panel_containments(asset_paths["start_icon"])
+                live_layout["notes"].extend(panel_cleanup["notes"])
+                if panel_cleanup["removed_panel_ids"]:
+                    live_layout["removed_panel_ids"] = panel_cleanup["removed_panel_ids"]
+                if panel_cleanup["removed_systray_ids"]:
+                    live_layout["removed_systray_ids"] = panel_cleanup["removed_systray_ids"]
 
                 log.info("Writing GTK settings")
                 self._write_gtk_settings(preset)
@@ -503,6 +570,12 @@ class UndercoverMode:
             raise UndercoverError("No protected GUI tools are available to launch.")
         return sorted(entries, key=lambda item: item["name"].lower())
 
+    def _managed_icon_theme_spec(self, theme_name: str) -> dict[str, str] | None:
+        return _MANAGED_ICON_THEME_SPECS.get(theme_name)
+
+    def _managed_icon_theme_asset_names(self) -> list[str]:
+        return sorted(set(_MANAGED_ICON_THEME_FILES.values()))
+
     def reset(self) -> dict[str, Any]:
         removed: list[str] = []
         preserved: list[str] = []
@@ -576,6 +649,46 @@ class UndercoverMode:
         log.debug("Installed color scheme %s -> %s", source, destination)
         return destination
 
+    def _install_managed_icon_theme(self, preset: Preset) -> Path | None:
+        spec = self._managed_icon_theme_spec(preset.icon_theme)
+        if spec is None:
+            return None
+
+        target_dir = self.icons_root / preset.icon_theme
+        index_theme = "\n".join(
+            [
+                "[Icon Theme]",
+                f"Name={spec['name']}",
+                f"Inherits={spec['inherits']}",
+                "Directories=places/scalable,mimetypes/scalable",
+                "",
+                "[places/scalable]",
+                "Context=Places",
+                "Size=64",
+                "Type=Scalable",
+                "MinSize=16",
+                "MaxSize=512",
+                "",
+                "[mimetypes/scalable]",
+                "Context=MimeTypes",
+                "Size=64",
+                "Type=Scalable",
+                "MinSize=16",
+                "MaxSize=512",
+            ]
+        )
+        self._write_text(target_dir / "index.theme", index_theme + "\n")
+
+        for (category, filename), asset_name in _MANAGED_ICON_THEME_FILES.items():
+            source = self.assets_root / asset_name
+            if not source.exists():
+                raise UndercoverError(f"Icon asset not found: {source}")
+            destination = target_dir / category / "scalable" / filename
+            self._copy_file(source, destination)
+
+        log.debug("Installed icon theme %s -> %s", preset.icon_theme, target_dir)
+        return target_dir
+
     def _install_look_and_feel_package(self, preset: Preset, asset_paths: dict[str, Path]) -> Path:
         target_dir = self.look_and_feel_root / preset.package_id
         replacements = {
@@ -631,6 +744,16 @@ class UndercoverMode:
                         "--key",
                         "widgetStyle",
                         "Breeze",
+                    ],
+                    [
+                        "kwriteconfig6",
+                        "--file",
+                        str(root / "kdeglobals"),
+                        "--group",
+                        "KDE",
+                        "--key",
+                        "SingleClick",
+                        "false",
                     ],
                     [
                         "kwriteconfig6",
@@ -719,6 +842,105 @@ class UndercoverMode:
             ],
         )
         self._write_text(defaults_root / "package", f"{preset.package_id}\n")
+        for command in commands:
+            log.debug("Running: %s", " ".join(command))
+            self._run(command)
+
+    def _apply_file_manager_settings(self) -> None:
+        dolphinrc = self.home / ".config" / "dolphinrc"
+        commands = [
+            [
+                "kwriteconfig6",
+                "--file",
+                str(dolphinrc),
+                "--group",
+                "General",
+                "--key",
+                "AutoExpandFolders",
+                "false",
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(dolphinrc),
+                "--group",
+                "General",
+                "--delete",
+                "--key",
+                "DoubleClickViewAction",
+                "",
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(dolphinrc),
+                "--group",
+                "General",
+                "--key",
+                "ShowFullPath",
+                "false",
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(dolphinrc),
+                "--group",
+                "General",
+                "--key",
+                "ShowFullPathInTitlebar",
+                "false",
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(dolphinrc),
+                "--group",
+                "General",
+                "--key",
+                "RememberOpenedTabs",
+                "false",
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(dolphinrc),
+                "--group",
+                "General",
+                "--key",
+                "ShowToolTips",
+                "false",
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(dolphinrc),
+                "--group",
+                "General",
+                "--key",
+                "ShowZoomSlider",
+                "false",
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(dolphinrc),
+                "--group",
+                "KFileDialog Settings",
+                "--key",
+                "Places Icons Auto-resize",
+                "false",
+            ],
+            [
+                "kwriteconfig6",
+                "--file",
+                str(dolphinrc),
+                "--group",
+                "KFileDialog Settings",
+                "--key",
+                "Places Icons Static Size",
+                "20",
+            ],
+        ]
         for command in commands:
             log.debug("Running: %s", " ".join(command))
             self._run(command)
@@ -813,6 +1035,106 @@ class UndercoverMode:
 
         stderr = command_result["stderr"] or command_result["stdout"] or "unknown error"
         result["notes"].append(f"qdbus6 failed while applying the live panel layout: {stderr}")
+        return result
+
+    def _prune_stale_panel_containments(self, managed_start_icon: Path) -> dict[str, Any]:
+        result: dict[str, Any] = {
+            "removed_panel_ids": [],
+            "removed_systray_ids": [],
+            "notes": [],
+        }
+        appletsrc = self.home / ".config" / "plasma-org.kde.plasma.desktop-appletsrc"
+        if not appletsrc.exists():
+            result["notes"].append(
+                "Plasma applet configuration was not found; skipped panel cleanup."
+            )
+            return result
+
+        sections = self._parse_ini_sections(appletsrc.read_text(encoding="utf-8"))
+        containments: dict[str, dict[str, str]] = {}
+        applets: dict[tuple[str, str], dict[str, str]] = {}
+
+        for name, lines in sections:
+            if name is None:
+                continue
+
+            if match := _TOP_CONTAINMENT_RE.match(name):
+                containments[match.group(1)] = self._parse_ini_key_values(lines)
+                continue
+
+            if match := _APPLET_SECTION_RE.match(name):
+                containment_id, applet_id = match.group(1), match.group(2)
+                applets[(containment_id, applet_id)] = self._parse_ini_key_values(lines)
+                continue
+
+            if match := _APPLET_CONFIG_SECTION_RE.match(name):
+                containment_id, applet_id = match.group(1), match.group(2)
+                applets.setdefault((containment_id, applet_id), {}).update(
+                    self._parse_ini_key_values(lines)
+                )
+
+        managed_panel_candidates: list[str] = []
+        managed_start_icon_path = str(managed_start_icon.resolve())
+        panel_ids = [
+            containment_id
+            for containment_id, data in containments.items()
+            if data.get("plugin") == "org.kde.panel"
+        ]
+        for containment_id in panel_ids:
+            kicker_icons = [
+                data.get("customButtonImage", "")
+                for (panel_id, _applet_id), data in applets.items()
+                if panel_id == containment_id and data.get("plugin") == "org.kde.plasma.kicker"
+            ]
+            if managed_start_icon_path in kicker_icons:
+                managed_panel_candidates.append(containment_id)
+
+        if not managed_panel_candidates:
+            result["notes"].append(
+                "No managed Plasma panel was identified in appletsrc; skipped stale panel cleanup."
+            )
+            return result
+
+        keep_panel_id = max(managed_panel_candidates, key=int)
+        keep_systray_ids = {
+            data["SystrayContainmentId"]
+            for (panel_id, _applet_id), data in applets.items()
+            if panel_id == keep_panel_id
+            and data.get("plugin") == "org.kde.plasma.systemtray"
+            and data.get("SystrayContainmentId")
+        }
+
+        removed_panel_ids = sorted((set(panel_ids) - {keep_panel_id}), key=int)
+        removed_systray_ids = sorted(
+            [
+                containment_id
+                for containment_id, data in containments.items()
+                if data.get("plugin") == "org.kde.plasma.private.systemtray"
+                and containment_id not in keep_systray_ids
+            ],
+            key=int,
+        )
+        drop_ids = set(removed_panel_ids) | set(removed_systray_ids)
+        if not drop_ids:
+            result["notes"].append("No stale Plasma panels were found in appletsrc.")
+            return result
+
+        kept_lines: list[str] = []
+        for name, lines in sections:
+            if name is not None:
+                match = _CONTAINMENT_SECTION_RE.match(name)
+                if match and match.group(1) in drop_ids:
+                    continue
+            kept_lines.extend(lines)
+
+        self._write_text(appletsrc, "".join(kept_lines))
+        result["removed_panel_ids"] = removed_panel_ids
+        result["removed_systray_ids"] = removed_systray_ids
+        result["notes"].append(
+            "Removed stale Plasma panel containments from appletsrc: "
+            f"panels={','.join(removed_panel_ids) or 'none'} "
+            f"systemtrays={','.join(removed_systray_ids) or 'none'}."
+        )
         return result
 
     def _write_gtk_settings(self, preset: Preset) -> None:
@@ -1280,6 +1602,33 @@ class UndercoverMode:
             temp_path = Path(handle.name)
         shutil.copy2(source, temp_path)
         temp_path.replace(destination)
+
+    def _parse_ini_sections(self, content: str) -> list[tuple[str | None, list[str]]]:
+        sections: list[tuple[str | None, list[str]]] = []
+        current_name: str | None = None
+        current_lines: list[str] = []
+
+        for line in content.splitlines(keepends=True):
+            match = _SECTION_HEADER_RE.match(line.strip())
+            if match:
+                sections.append((current_name, current_lines))
+                current_name = match.group(1)
+                current_lines = [line]
+                continue
+            current_lines.append(line)
+
+        sections.append((current_name, current_lines))
+        return sections
+
+    def _parse_ini_key_values(self, lines: list[str]) -> dict[str, str]:
+        values: dict[str, str] = {}
+        for line in lines[1:]:
+            stripped = line.strip()
+            if not stripped or stripped.startswith(("#", ";")) or "=" not in stripped:
+                continue
+            key, _, value = stripped.partition("=")
+            values[key] = value
+        return values
 
     def _write_text(self, path: Path, content: str) -> None:
         self._ensure_dir(path.parent)
