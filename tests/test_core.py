@@ -479,10 +479,31 @@ class TestBaseSettings:
         ) == "org.test.preset\n"
         defaults_kdeglobals = str(fake_home / ".config" / "kdedefaults" / "kdeglobals")
         defaults_plasmarc = str(fake_home / ".config" / "kdedefaults" / "plasmarc")
+        defaults_kwinrc = str(fake_home / ".config" / "kdedefaults" / "kwinrc")
         user_kdeglobals = str(fake_home / ".config" / "kdeglobals")
+        user_kwinrc = str(fake_home / ".config" / "kwinrc")
         assert any(defaults_kdeglobals in call for call in calls)
         assert any(defaults_plasmarc in call for call in calls)
         assert any(user_kdeglobals in call for call in calls)
+        assert any(defaults_kwinrc in call for call in calls)
+        assert any(user_kwinrc in call for call in calls)
+        assert any("ButtonsOnRight" in call and "IAX" in call for call in calls)
+        assert any("ButtonsOnLeft" in call for call in calls)
+        assert any("BorderlessMaximizedWindows" in call and "true" in call for call in calls)
+        assert any("activeFont" in call and "Liberation Sans,10,-1,5,50,0,0,0,0,0" in call for call in calls)
+        assert any("fixed" in call and "Liberation Mono,10,-1,5,50,0,0,0,0,0" in call for call in calls)
+
+
+class TestGtkSettings:
+    def test_writes_windows_like_fonts(self, manager: UndercoverMode, fake_home: Path) -> None:
+        preset = manager.get_preset("test")
+
+        manager._write_gtk_settings(preset)
+
+        gtk3 = (fake_home / ".config" / "gtk-3.0" / "settings.ini").read_text(encoding="utf-8")
+        gtk2 = (fake_home / ".config" / "gtkrc-2.0").read_text(encoding="utf-8")
+        assert "gtk-font-name=Liberation Sans 10" in gtk3
+        assert 'gtk-font-name="Liberation Sans 10"' in gtk2
 
 
 class TestFileManagerSettings:

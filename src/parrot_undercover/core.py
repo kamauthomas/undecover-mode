@@ -41,6 +41,9 @@ _MANAGED_ICON_THEME_SPECS: dict[str, dict[str, str]] = {
 
 _MANAGED_ICON_THEME_FIXED_SIZES: tuple[str, ...] = ("16", "22", "24")
 _MANAGED_ICON_THEME_FIXED_CONTEXTS: frozenset[str] = frozenset({"mimetypes", "places"})
+_WINDOWS_UI_FONT = "Liberation Sans,10,-1,5,50,0,0,0,0,0"
+_WINDOWS_MONO_FONT = "Liberation Mono,10,-1,5,50,0,0,0,0,0"
+_WINDOWS_SMALL_FONT = "Liberation Sans,8,-1,5,50,0,0,0,0,0"
 
 _MANAGED_ICON_THEME_FILES: dict[tuple[str, str], str] = {
     ("actions/scalable", "folder-open-recent.svg"): "windows-folder-open.svg",
@@ -1031,6 +1034,66 @@ class UndercoverMode:
                         "--file",
                         str(root / "kdeglobals"),
                         "--group",
+                        "General",
+                        "--key",
+                        "font",
+                        _WINDOWS_UI_FONT,
+                    ],
+                    [
+                        "kwriteconfig6",
+                        "--file",
+                        str(root / "kdeglobals"),
+                        "--group",
+                        "General",
+                        "--key",
+                        "menuFont",
+                        _WINDOWS_UI_FONT,
+                    ],
+                    [
+                        "kwriteconfig6",
+                        "--file",
+                        str(root / "kdeglobals"),
+                        "--group",
+                        "General",
+                        "--key",
+                        "toolBarFont",
+                        _WINDOWS_UI_FONT,
+                    ],
+                    [
+                        "kwriteconfig6",
+                        "--file",
+                        str(root / "kdeglobals"),
+                        "--group",
+                        "General",
+                        "--key",
+                        "smallestReadableFont",
+                        _WINDOWS_SMALL_FONT,
+                    ],
+                    [
+                        "kwriteconfig6",
+                        "--file",
+                        str(root / "kdeglobals"),
+                        "--group",
+                        "General",
+                        "--key",
+                        "fixed",
+                        _WINDOWS_MONO_FONT,
+                    ],
+                    [
+                        "kwriteconfig6",
+                        "--file",
+                        str(root / "kdeglobals"),
+                        "--group",
+                        "WM",
+                        "--key",
+                        "activeFont",
+                        _WINDOWS_UI_FONT,
+                    ],
+                    [
+                        "kwriteconfig6",
+                        "--file",
+                        str(root / "kdeglobals"),
+                        "--group",
                         "Icons",
                         "--key",
                         "Theme",
@@ -1075,6 +1138,36 @@ class UndercoverMode:
                         "--key",
                         "theme",
                         "Breeze",
+                    ],
+                    [
+                        "kwriteconfig6",
+                        "--file",
+                        str(root / "kwinrc"),
+                        "--group",
+                        "org.kde.kdecoration2",
+                        "--key",
+                        "ButtonsOnLeft",
+                        "",
+                    ],
+                    [
+                        "kwriteconfig6",
+                        "--file",
+                        str(root / "kwinrc"),
+                        "--group",
+                        "org.kde.kdecoration2",
+                        "--key",
+                        "ButtonsOnRight",
+                        "IAX",
+                    ],
+                    [
+                        "kwriteconfig6",
+                        "--file",
+                        str(root / "kwinrc"),
+                        "--group",
+                        "Windows",
+                        "--key",
+                        "BorderlessMaximizedWindows",
+                        "true",
                     ],
                     [
                         "kwriteconfig6",
@@ -1403,7 +1496,7 @@ class UndercoverMode:
             f'gtk-theme-name="{preset.gtk_theme}"\n'
             f'gtk-icon-theme-name="{preset.gtk_icon_theme}"\n'
             f'gtk-cursor-theme-name="{preset.cursor_theme}"\n'
-            'gtk-font-name="Noto Sans 10"\n'
+            'gtk-font-name="Liberation Sans 10"\n'
         )
         self._write_text(self.home / ".config" / "gtkrc-2.0", gtkrc)
         self._write_text(self.home / ".config" / "gtkrc", gtkrc)
@@ -1413,7 +1506,7 @@ class UndercoverMode:
             f"gtk-theme-name={preset.gtk_theme}\n"
             f"gtk-icon-theme-name={preset.gtk_icon_theme}\n"
             f"gtk-cursor-theme-name={preset.cursor_theme}\n"
-            "gtk-font-name=Noto Sans 10\n"
+            "gtk-font-name=Liberation Sans 10\n"
             f"gtk-application-prefer-dark-theme={1 if preset.prefer_dark else 0}\n"
         )
         self._write_text(self.home / ".config" / "gtk-3.0" / "settings.ini", settings_ini)
