@@ -39,7 +39,7 @@ clock.writeConfig("use24hFormat", "1");
 
 var showDesktop = panel.addWidget("org.kde.plasma.showdesktop");
 showDesktop.currentConfigGroup = ["General"];
-showDesktop.writeConfig("icon", "desktop-symbolic");
+showDesktop.writeConfig("icon", "windows-show-desktop");
 
 var desktopsArray = desktopsForActivity(currentActivity());
 for (var j = 0; j < desktopsArray.length; j++) {

@@ -48,8 +48,13 @@ _WINDOWS_SMALL_FONT = "Liberation Sans,8,-1,5,50,0,0,0,0,0"
 _MANAGED_ICON_THEME_FILES: dict[tuple[str, str], str] = {
     ("actions/scalable", "folder-open-recent.svg"): "windows-folder-open.svg",
     ("actions/scalable", "folder-symbolic.svg"): "windows-folder.svg",
+    ("actions/scalable", "windows-show-desktop.svg"): "windows-show-desktop.svg",
+    ("actions/16", "windows-show-desktop.svg"): "windows-show-desktop.svg",
+    ("actions/22", "windows-show-desktop.svg"): "windows-show-desktop.svg",
+    ("actions/24", "windows-show-desktop.svg"): "windows-show-desktop.svg",
     ("actions/symbolic", "folder-open-recent-symbolic.svg"): "windows-folder-open.svg",
     ("actions/symbolic", "folder-symbolic.svg"): "windows-folder.svg",
+    ("actions/symbolic", "windows-show-desktop.svg"): "windows-show-desktop.svg",
     ("mimetypes/scalable", "application-json.svg"): "windows-text-file.svg",
     ("mimetypes/scalable", "application-msword-template.svg"): "windows-file.svg",
     ("mimetypes/scalable", "application-msword.svg"): "windows-file.svg",

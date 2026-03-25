@@ -74,7 +74,7 @@ def manager(tmp_path: Path, fake_home: Path, monkeypatch: pytest.MonkeyPatch) ->
             'clock.writeConfig("use24hFormat", "1");\n'
             'var showDesktop = panel.addWidget("org.kde.plasma.showdesktop");\n'
             'showDesktop.currentConfigGroup = ["General"];\n'
-            'showDesktop.writeConfig("icon", "desktop-symbolic");\n'
+            'showDesktop.writeConfig("icon", "windows-show-desktop");\n'
             'var x = "__START_ICON_PATH__";\n'
         ),
         encoding="utf-8",
@@ -103,6 +103,7 @@ def manager(tmp_path: Path, fake_home: Path, monkeypatch: pytest.MonkeyPatch) ->
         "windows-folder-videos.svg",
         "windows-folder-desktop.svg",
         "windows-text-file.svg",
+        "windows-show-desktop.svg",
     ):
         (assets_dir / asset_name).write_text("<svg/>", encoding="utf-8")
 

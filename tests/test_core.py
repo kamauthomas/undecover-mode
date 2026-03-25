@@ -257,7 +257,7 @@ class TestTemplateExpansion:
             package_path / "contents" / "layouts" / "org.kde.plasma.desktop-layout.js"
         ).read_text(encoding="utf-8")
         assert "__START_ICON_PATH__" not in layout_js
-        assert 'writeConfig("icon", "desktop-symbolic");' in layout_js
+        assert 'writeConfig("icon", "windows-show-desktop");' in layout_js
         assert 'clock.writeConfig("use24hFormat", "1");' in layout_js
         splash_qml = (package_path / "contents" / "splash" / "Splash.qml").read_text(
             encoding="utf-8"
@@ -594,6 +594,9 @@ class TestManagedIconTheme:
         ).read_text(encoding="utf-8") == "<svg/>"
         assert (
             theme_root / "mimetypes" / "24" / "text-plain.svg"
+        ).read_text(encoding="utf-8") == "<svg/>"
+        assert (
+            theme_root / "actions" / "22" / "windows-show-desktop.svg"
         ).read_text(encoding="utf-8") == "<svg/>"
         audio_icon = theme_root / "status" / "16" / "audio-volume-medium-symbolic.svg"
         media_icon = theme_root / "actions" / "22" / "media-playback-start-symbolic.svg"
